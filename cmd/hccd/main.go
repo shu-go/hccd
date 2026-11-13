@@ -67,7 +67,7 @@ func main() {
 	}
 	fs.BoolVar(&o.version, "version", false, "print the version and exit")
 	if runtime.GOOS == "windows" {
-		fs.BoolVar(&o.register, "register", false, "add \"Herdr で開く\" to the Explorer context menu (with -s: create spaces)")
+		fs.BoolVar(&o.register, "register", false, "add \"Open in Herdr\" to the Explorer context menu (with -s: create spaces)")
 		fs.BoolVar(&o.unregister, "unregister", false, "remove it from the Explorer context menu")
 	}
 	fs.Usage = func() {

@@ -18,14 +18,14 @@ func foregroundExplorerFolder() (string, bool, error) {
 	return dir, ok, err
 }
 
-const menuLabel = "Herdr で開く"
+const menuLabel = "Open in Herdr"
 
 func registerMenu(register, space bool) error {
 	if !register {
 		if err := winx.Unregister(); err != nil {
 			return err
 		}
-		report("Explorer の右クリックメニューから削除しました。")
+		report("Removed from the File Explorer context menu.")
 		return nil
 	}
 	exe, err := os.Executable()
@@ -43,7 +43,7 @@ func registerMenu(register, space bool) error {
 	if err := winx.Register(exe, menuLabel, extra); err != nil {
 		return err
 	}
-	report(fmt.Sprintf("Explorer の右クリックメニューに「%s」を登録しました（%s）。", menuLabel, exe))
+	report(fmt.Sprintf("Added %q to the File Explorer context menu (%s).", menuLabel, exe))
 	return nil
 }
 

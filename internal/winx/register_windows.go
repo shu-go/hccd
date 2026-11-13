@@ -17,7 +17,7 @@ var menuEntries = []struct{ class, arg string }{
 	{`*`, "%1"},                    // a file: run it
 }
 
-// Register adds "Herdr で開く" to the Explorer context menu for the current
+// Register adds "Open in Herdr" to the Explorer context menu for the current
 // user. exe should be the GUI build (hccdw.exe). extra are flags placed
 // before the path (e.g. "--space").
 func Register(exe, label string, extra []string) error {

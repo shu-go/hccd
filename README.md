@@ -1,47 +1,49 @@
 # hccd
 
-Herdr のタブを「ディレクトリー単位」で開く／切り替えるツール。
+English | [日本語](README_ja.md)
+
+Open or switch to a Herdr tab by directory.
 
 ```
 hccd [options] [<dir>|<file>]
 ```
 
-- 引数なし: カレントディレクトリー（エクスプローラーから起動したときは、そのエクスプローラーで表示中のフォルダー）
-- `<dir>`: そのディレクトリー
-- `<file>`: 親ディレクトリーのタブを開き、そのシェルでファイルを実行する
+- No argument: the current directory (when started from File Explorer, the folder shown in that Explorer window)
+- `<dir>`: that directory
+- `<file>`: opens the tab for its parent directory and runs the file in that tab's shell
 
-そのディレクトリーにいるシェルのタブがあればそれを表示し、無ければ新しいタブを作る。Herdr のウィンドウが無ければ起動し、最後に前面へ出す。
+If a tab whose shell is in that directory exists, hccd shows it; otherwise it creates a new tab. If no Herdr window is open, hccd starts one, and finally brings it to the front.
 
-| オプション | 意味 |
+| Option | Description |
 |---|---|
-| `-s`, `--space` | タブが無いとき、新しいスペースを作る |
-| `-n`, `--new` | 既存タブを探さず、常に新しく作る |
-| `--name <name>` | 新しいタブ／スペースの名前（既定: フォルダー名） |
-| `-v`, `--verbose` | 何をしたかを表示 |
-| `--version` | バージョンを表示 |
-| `--register` / `--unregister` | (Windows) エクスプローラーの右クリックメニューに「Herdr で開く」を登録／削除（`-s` と併用可） |
+| `-s`, `--space` | Create a new space when no tab exists |
+| `-n`, `--new` | Always create a new tab without looking for an existing one |
+| `--name <name>` | Name of the new tab/space (default: folder name) |
+| `-v`, `--verbose` | Explain what it does |
+| `--version` | Print the version |
+| `--register` / `--unregister` | (Windows) Add/remove "Open in Herdr" in the File Explorer context menu (can be combined with `-s`) |
 
-## 必要なもの
+## Requirements
 
-- [herdr-core](https://github.com/herdrdev/herdr-core) の `hc` と [herdr-app](https://github.com/herdrdev/herdr-app) の `herdr-app` が PATH にあること
+- `hc` from [herdr-core](https://github.com/herdrdev/herdr-core) and `herdr-app` from [herdr-app](https://github.com/herdrdev/herdr-app) on your PATH
 
-## ビルド
+## Build
 
 ```powershell
-go build -o bin\hccd.exe ./cmd/hccd                             # 端末用
-go build -ldflags "-H=windowsgui" -o bin\hccdw.exe ./cmd/hccd   # エクスプローラー用（コンソール窓なし）
+go build -o bin\hccd.exe ./cmd/hccd                             # for terminals
+go build -ldflags "-H=windowsgui" -o bin\hccdw.exe ./cmd/hccd   # for File Explorer (no console window)
 ```
 
-Linux / macOS は `go build -o bin/hccd ./cmd/hccd`。
+On Linux / macOS: `go build -o bin/hccd ./cmd/hccd`.
 
-## エクスプローラーから使う (Windows)
+## Using from File Explorer (Windows)
 
-- `bin\hccd.exe --register` で右クリックメニューに登録する（`hccdw.exe` が同じフォルダーにあればそれを登録）。フォルダー、フォルダーの背景、ドライブ、ファイルのメニューに出る。Windows 11 では「その他のオプションを確認」の中。
-- `hccdw.exe` をダブルクリック、またはそのショートカットから起動すると、前面のエクスプローラーで表示中のフォルダーを対象にする。
-  前面がエクスプローラーでないとき（デスクトップのショートカットから起動した場合など）は、カレントディレクトリー（ショートカットの「作業フォルダー」、既定は exe のあるフォルダー）を対象にする。
+- Run `bin\hccd.exe --register` to add it to the context menu (if `hccdw.exe` is in the same folder, that one is registered). It appears in the menus for folders, folder backgrounds, drives and files. On Windows 11 it is under "Show more options".
+- When `hccdw.exe` is started by double-click or from a shortcut, it uses the folder shown in the foreground Explorer window.
+  If the foreground window is not Explorer (for example, a shortcut on the desktop), it uses the current directory (the shortcut's "Start in" folder; by default the folder of the exe).
 
-## 制約
+## Limitations
 
-- ディレクトリーの判定は Herdr 既定のシェル（Windows では pwsh）の現在位置で行う。タブ内でさらに cmd などを起動して移動した場合は判定できない。
-- 「空いているシェル」の判定は、エージェントがいないこととシェルに子プロセスが無いことで行う。pwsh 内部コマンド（`Start-Sleep` など）の実行中は空きと判定される。
-- Linux / macOS は未検証。
+- The directory is matched against the current location of Herdr's default shell (pwsh on Windows). If you start another shell such as cmd inside a tab and move around there, it cannot be detected.
+- A shell is considered idle when no agent is in it and it has no child processes. While pwsh runs a built-in command (such as `Start-Sleep`), it is considered idle.
+- Linux / macOS are not tested yet.
