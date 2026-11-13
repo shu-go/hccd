@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+version: 2
+
+project_name: hccd
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  # CLI (console): Windows / Linux / macOS
+  - id: hccd
+    main: ./cmd/hccd
+    binary: hccd
+    env:
+      - CGO_ENABLED=0
+    goos: [windows, linux, darwin]
+    goarch: [amd64, arm64]
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X main.version={{ .Version }}
+
+  # Explorer launcher (GUI subsystem, no console window): Windows only
+  - id: hccdw
+    main: ./cmd/hccd
+    binary: hccdw
+    env:
+      - CGO_ENABLED=0
+    goos: [windows]
+    goarch: [amd64, arm64]
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -H=windowsgui -X main.version={{ .Version }}
+
+archives:
+  # Windows archives hold both hccd.exe and hccdw.exe (same os/arch).
+  - ids: [hccd, hccdw]
+    # Windows has 2 binaries, others 1: intended.
+    allow_different_binary_count: true
+    formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - README.md
+      - LICENSE*
+
+checksum:
+  name_template: checksums.txt
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
